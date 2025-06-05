@@ -41,7 +41,11 @@ function handleApiError(context: string, error: unknown): never {
  * Builds a URL with query parameters
  */
 function buildUrl(path: string, params: Record<string, any> = {}): string {
-  const url = new URL(path, N8N_HOST);
+  // Handle URL construction properly when N8N_HOST includes a path
+  const baseUrl = N8N_HOST.endsWith('/') ? N8N_HOST.slice(0, -1) : N8N_HOST;
+  const fullPath = path.startsWith('/') ? path : '/' + path;
+  const url = new URL(baseUrl + fullPath);
+  
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       url.searchParams.append(key, String(value));

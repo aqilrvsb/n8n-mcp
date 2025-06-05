@@ -1,7 +1,7 @@
 {
-  "name": "@kernel.salacoste/n8n-workflow-builder",
-  "version": "0.7.2",
-  "description": "MCP (Model Context Protocol) server for managing n8n workflows through Claude AI and Cursor IDE",
+  "name": "n8n-mcp-aqil",
+  "version": "1.0.0",
+  "description": "Working n8n MCP integration for Claude Desktop with Railway support and Facebook Ads automation",
   "scripts": {
     "clean": "rm -rf build",
     "build": "tsc",
@@ -37,20 +37,21 @@
     "automation",
     "mcp",
     "claude",
-    "cursor",
+    "railway",
+    "facebook-ads",
     "ai",
     "model-context-protocol"
   ],
-  "author": "IMD",
+  "author": "Aqil Azfar <aqilrvsb@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/salacoste/mcp-n8n-workflow-builder.git"
+    "url": "git+https://github.com/aqilrvsb/n8n-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/salacoste/mcp-n8n-workflow-builder/issues"
+    "url": "https://github.com/aqilrvsb/n8n-mcp/issues"
   },
-  "homepage": "https://github.com/salacoste/mcp-n8n-workflow-builder",
+  "homepage": "https://github.com/aqilrvsb/n8n-mcp",
   "engines": {
     "node": ">=14.0.0"
   }
