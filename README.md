@@ -1,509 +1,264 @@
+# 🚀 n8n MCP - Complete n8n Automation for Claude
 
-# n8n Workflow Builder MCP Server
+A working **Model Context Protocol (MCP)** integration that gives Claude full control over your n8n workflows. Supports Railway hosting, Facebook Ads automation, and complete workflow management.
 
-This project provides an MCP (Model Context Protocol) server for managing n8n workflows. It allows you to create, update, delete, activate, and deactivate workflows through a set of tools available in Claude AI and Cursor IDE.
+## ✨ What This Does
 
-**Key Features:**
-- Full integration with Claude AI and Cursor IDE via MCP protocol
-- Create and manage n8n workflows via natural language
-- Predefined workflow templates through prompts system
-- Interactive workflow building with real-time feedback
+Transform Claude into your **n8n automation assistant**:
+- 🔄 **Create, manage & execute workflows** via chat
+- 🌐 **Railway n8n integration** - works with hosted instances  
+- 📱 **Facebook Ads automation** - pre-built MCP integration
+- 🎯 **Real-time workflow control** - activate, deactivate, monitor
+- 📊 **Execution monitoring** - track runs and debug issues
 
-## Requirements
+## 🎯 Live Demo
 
-- Node.js (v14+ recommended)
-- npm
-- n8n instance with API access (tested and compatible with n8n version 1.82.3)
-- Claude App or Cursor IDE for AI interaction
+Your n8n instance: **https://n8n-production-790f.up.railway.app/**
 
-## Installation Guide
+Chat with Claude:
+- *"list my n8n workflows"*
+- *"create a daily email automation workflow"*  
+- *"activate the Facebook ads workflow"*
+- *"show me recent workflow executions"*
 
-### 1. Install from npm (Recommended)
+## 🚀 Quick Setup (5 Minutes)
 
-You can install the package directly from npm:
-
+### 1. Clone & Install
 ```bash
-# Install globally
-npm install -g @kernel.salacoste/n8n-workflow-builder
-
-# Or as a local dependency
-npm install @kernel.salacoste/n8n-workflow-builder
-```
-
-After installation, you need to configure the environment variables (see step 3).
-
-### 2. Clone the Repository
-
-Alternatively, you can clone the repository from GitHub:
-
-```bash
-git clone https://github.com/salacoste/mcp-n8n-workflow-builder.git
-```
-
-Then navigate to the project directory:
-
-```bash
-cd mcp-n8n-workflow-builder
-```
-
-### 3. Install Dependencies
-
-Install the necessary dependencies using npm:
-
-```bash
+git clone https://github.com/aqilrvsb/n8n-mcp.git
+cd n8n-mcp
 npm install
+npm run build
 ```
 
-### 4. Configure Environment Variables
+### 2. Run Setup Script
+```bash
+# Windows
+install.bat
 
-Create an `.env` file in the project root with the following variables:
-
+# Linux/Mac
+chmod +x install.sh && ./install.sh
 ```
-N8N_HOST=https://your-n8n-instance.com/api/v1/
+
+### 3. Get Your n8n API Key
+1. Go to your n8n instance: https://n8n-production-790f.up.railway.app/
+2. **Settings** → **API Keys** → **Create API Key**
+3. Copy the generated key
+
+### 4. Configure Environment
+Edit `.env` file:
+```env
+N8N_HOST=https://n8n-production-790f.up.railway.app/api/v1
 N8N_API_KEY=your_api_key_here
+MCP_PORT=58921
 ```
 
-### 5. Build and Run
+### 5. Setup Claude Desktop
+**Windows:** `C:\Users\[USERNAME]\AppData\Roaming\Claude\claude_desktop_config.json`
 
-If you installed via npm globally, you can run the server using the command:
+**Mac:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
-```bash
-n8n-workflow-builder
-```
-
-Or with JSON-RPC mode:
-
-```bash
-n8n-workflow-builder --json-rpc
-```
-
-If you cloned the repository or installed as a local dependency, use the following commands:
-
-- **Build the project:**
-  
-  ```bash
-  npm run build
-  ```
-
-- **Start the MCP Server in standalone mode:**
-  
-  ```bash
-  npm start
-  ```
-
-- **Start with JSON-RPC mode for testing:**
-  
-  ```bash
-  npm run start -- --json-rpc
-  ```
-
-The server will start and accept requests via stdio or JSON-RPC depending on the mode.
-
-### 6. Claude App Integration
-
-For integration with Claude App, you need to create a configuration file `cline_mcp_settings.json`. You can copy the example from `cline_mcp_settings.example.json` and edit it:
-
-```bash
-cp cline_mcp_settings.example.json cline_mcp_settings.json
-```
-
-Then edit the file, providing the correct environment variable values:
+**Linux:** `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
-  "n8n-workflow-builder": {
-    "command": "node",
-    "args": ["path/to/your/project/build/index.js"],
-    "env": {
-      "N8N_HOST": "https://your-n8n-instance.com/api/v1/",
-      "N8N_API_KEY": "your_api_key_here",
-      "MCP_PORT": "58921"
-    },
-    "disabled": false,
-    "alwaysAllow": [
-      "list_workflows",
-      "get_workflow",
-      "list_executions",
-      "get_execution"
-    ],
-    "autoApprove": [
-      "create_workflow",
-      "update_workflow",
-      "activate_workflow",
-      "deactivate_workflow",
-      "delete_workflow",
-      "delete_execution"
-    ]
+  "mcpServers": {
+    "n8n-workflow-builder": {
+      "command": "node",
+      "args": ["[FULL_PATH_TO]/n8n-mcp/build/index.js"],
+      "env": {
+        "N8N_HOST": "https://n8n-production-790f.up.railway.app/api/v1",
+        "N8N_API_KEY": "your_api_key_here",
+        "MCP_PORT": "58921"
+      },
+      "disabled": false,
+      "alwaysAllow": [
+        "list_workflows",
+        "get_workflow",
+        "list_executions",
+        "get_execution"
+      ],
+      "autoApprove": [
+        "create_workflow",
+        "update_workflow",
+        "activate_workflow",
+        "deactivate_workflow",
+        "delete_workflow",
+        "delete_execution"
+      ]
+    }
   }
 }
 ```
 
-**Important Notes:**
-- The `MCP_PORT` parameter is optional but recommended to avoid port conflicts
-- Use a non-standard high port (like 58921) if you encounter conflicts
-- Starting with version 0.7.2, the server gracefully handles port conflicts
-- Do not add `cline_mcp_settings.json` to the repository as it contains your personal access credentials
-
-## Available Tools and Features
-
-### MCP Tools
-
-The following tools are available through the MCP protocol:
-
-#### Workflow Management
-- **list_workflows**: Displays a list of all workflows from n8n.
-- **create_workflow**: Creates a new workflow in n8n.
-- **get_workflow**: Gets workflow details by its ID.
-- **update_workflow**: Updates an existing workflow.
-- **delete_workflow**: Deletes a workflow by its ID.
-- **activate_workflow**: Activates a workflow by its ID.
-- **deactivate_workflow**: Deactivates a workflow by its ID.
-- **execute_workflow**: Manually executes a workflow by its ID.
-
-#### Execution Management
-- **list_executions**: Displays a list of all workflow executions with filtering capabilities.
-- **get_execution**: Gets details of a specific execution by its ID.
-- **delete_execution**: Deletes an execution record by its ID.
-
-#### Tag Management
-- **create_tag**: Creates a new tag.
-- **get_tags**: Gets a list of all tags.
-- **get_tag**: Gets tag details by its ID.
-- **update_tag**: Updates an existing tag.
-- **delete_tag**: Deletes a tag by its ID.
-
-All tools have been tested and optimized for n8n version 1.82.3. The node types and API structures used are compatible with this version.
-
-### Important Note About Workflow Triggers
-
-When working with n8n version 1.82.3, please note the following important requirements:
-
-- **Trigger nodes are required for activation**: n8n requires at least one valid trigger node to successfully activate a workflow.
-- **Valid trigger node types** include:
-  - `scheduleTrigger` (recommended for automation)
-  - `webhook` (for HTTP-triggered workflows)
-  - Service-specific trigger nodes
-- **Automatic trigger addition**: The `activate_workflow` tool automatically adds a `scheduleTrigger` node when no trigger is detected
-- **Manual trigger limitation**: The `manualTrigger` node type is NOT recognized as a valid trigger by n8n API v1.82
-
-The `activate_workflow` tool implements intelligent detection of trigger nodes and adds necessary attributes to ensure compatibility with the n8n API.
-
-### Known Limitations and API Issues
-
-During testing with n8n version 1.82.3, we've identified several API limitations that users should be aware of:
-
-#### Trigger Node Activation Issue
-
-The n8n API enforces strict requirements for workflow activation that aren't clearly documented:
-
+### 6. Restart Claude Desktop & Test
 ```
-Status: 400
-Error: Workflow has no node to start the workflow - at least one trigger, poller or webhook node is required
+Try: "list my n8n workflows"
 ```
 
-**Impact**:
-- Workflows without a recognized trigger node cannot be activated via API
-- The `manualTrigger` node is NOT recognized as a valid trigger despite being usable in the UI
-- Even adding attributes like `group: ['trigger']` to `manualTrigger` does not solve the issue
+## 🛠️ Available Commands
 
-**Our solution**:
-- The `activate_workflow` function automatically detects missing trigger nodes
-- Adds a properly configured `scheduleTrigger` when needed
-- Preserves all your existing nodes and connections
+### Workflow Management
+- `list_workflows` - Show all workflows
+- `create_workflow` - Build new automations
+- `get_workflow` - Get workflow details
+- `update_workflow` - Modify existing workflows
+- `activate_workflow` / `deactivate_workflow` - Control workflow state
+- `duplicate_workflow` - Copy workflows
+- `delete_workflow` - Remove workflows
 
-#### Tag Management Conflicts
+### Execution Control  
+- `execute_workflow` - Run workflows manually
+- `list_executions` - Show execution history
+- `get_execution` - Get execution details
+- `delete_execution` - Clean up execution logs
 
-When updating tags that already exist, the API returns a **409 Conflict Error**:
+### Organization
+- `create_tag` / `get_tags` / `update_tag` / `delete_tag` - Organize workflows
 
-```
-Status: 409
-Error: Tag with this name already exists
-```
+## 🎯 Pre-Built Integrations
 
-**Impact**:
-- Tag updates may fail if a tag with the requested name already exists
-- This happens even when updating a tag to the same name
+### Facebook Ads Automation
+Your setup includes a complete **Facebook Ads MCP** with tools for:
+- Campaign management (create, update, delete)
+- Ad set management with targeting
+- Ad creative creation
+- Performance insights and reporting
+- Audience management (custom, lookalike)
 
-**Our solution**:
-- The test script now implements UUID generation for tag names
-- Performs cleanup of existing tags before testing
-- Implements proper error handling for tag conflicts
+### Railway n8n Support
+Optimized for **Railway hosting** with:
+- Automatic API endpoint configuration
+- Environment variable management
+- Cloud-first architecture
+- SSL/HTTPS support
 
-#### Execution Limitations
+## 📚 Documentation Files
 
-The execution API has limitations with certain trigger types:
+- **SETUP_INSTRUCTIONS.md** - Detailed installation guide
+- **CLAUDE_CONFIG.md** - Complete Claude Desktop configuration
+- **examples/** - Sample workflows and use cases
 
-- **Webhook triggers**: Return 404 errors when executed via API (expected behavior)
-- **Manual triggers**: Cannot be properly executed through the API in version 1.82.3
-- **Schedule triggers**: Can be activated but may not execute immediately
+## 🐛 Troubleshooting
 
-**Recommendation**:
-For workflows that need to be executed via API, use the `scheduleTrigger` with your desired interval settings.
+### MCP Not Working
+1. ✅ Check n8n API key is valid
+2. ✅ Verify Railway n8n instance is accessible  
+3. ✅ Restart Claude Desktop completely
+4. ✅ Check console logs in Claude Desktop
 
-### MCP Resources
-
-The server provides the following resources for more efficient context access:
-
-#### Static Resources
-- **/workflows**: List of all available workflows in the n8n instance
-- **/execution-stats**: Summary statistics about workflow executions
-
-#### Dynamic Resource Templates
-- **/workflows/{id}**: Detailed information about a specific workflow
-- **/executions/{id}**: Detailed information about a specific execution
-
-### MCP Prompts
-
-The server offers predefined workflow templates through the prompts system:
-
-#### Available Prompts
-- **Schedule Triggered Workflow**: Create a workflow that runs on a schedule
-- **HTTP Webhook Workflow**: Create a workflow that responds to HTTP webhook requests
-- **Data Transformation Workflow**: Create a workflow for processing and transforming data
-- **External Service Integration Workflow**: Create a workflow that integrates with external services
-- **API Data Polling Workflow**: Create a workflow that polls an API and processes data with filtering
-
-Each prompt has variables that can be customized when generating a workflow, such as workflow name, schedule expression, webhook path, and more.
-
-## Usage Examples
-
-In the `examples` directory, you'll find examples and instructions for setting up and using n8n Workflow Builder with Claude App:
-
-1. **setup_with_claude.md** - Step-by-step instructions for setting up integration with Claude App
-2. **workflow_examples.md** - Simple query examples for working with n8n workflows
-3. **complex_workflow.md** - Examples of creating and updating complex workflows
-4. **using_prompts.md** - Guide to using the prompts feature for quick workflow creation
-
-## Testing the Server
-
-You can use the provided test scripts to verify the functionality:
-
-### Using test-mcp-tools.js
-
-The `test-mcp-tools.js` script provides comprehensive testing of all MCP tools against your n8n instance. This is the recommended way to validate your setup and ensure all functionality works correctly.
-
+### API Errors
 ```bash
-# Run all tests
-node test-mcp-tools.js
+# Test your n8n API directly
+curl -H "X-N8N-API-KEY: your_key" \
+     https://n8n-production-790f.up.railway.app/api/v1/workflows
 ```
 
-The script performs the following tests:
-1. Health check and tools availability
-2. Workflow management (create, read, update, activate)
-3. Tag management (create, read, update, delete)
-4. Execution management (execute, list, get, delete)
-
-The test script creates temporary test workflows and tags which are automatically cleaned up after testing. You can customize the test behavior by modifying the test configuration variables at the top of the script.
-
-```javascript
-// Configuration options in test-mcp-tools.js
-const config = {
-  mcpServerUrl: 'http://localhost:3456/mcp',
-  healthCheckUrl: 'http://localhost:3456/health',
-  testWorkflowName: 'Test Workflow MCP',
-  // ... other options
-};
-
-// Test flags to enable/disable specific test suites
-const testFlags = {
-  runWorkflowTests: true,
-  runTagTests: true, 
-  runExecutionTests: true,
-  runCleanup: true
-};
+### Port Conflicts
+If port 58921 is busy, change `MCP_PORT` in both `.env` and Claude config:
+```env
+MCP_PORT=58922
 ```
 
-### Additional Test Scripts
+## 💡 Example Use Cases
 
-```bash
-# Test basic functionality with Claude
-node test-claude.js
+### Daily Automation
+*"Create a workflow that checks my email every hour and sends me a summary"*
 
-# Test prompts functionality
-node test-prompts.js
+### Social Media Management  
+*"Build a workflow that posts to Twitter and Facebook when I publish a blog post"*
 
-# Test workflow creation and management
-node test-workflow.js
-```
+### Lead Generation
+*"Set up a workflow that captures leads from my website and adds them to my CRM"*
 
-## Troubleshooting
+### Data Sync
+*"Create a workflow that syncs data between my e-commerce store and inventory system"*
 
-- Make sure you are using npm.
-- If you encounter problems, try cleaning the build directory and rebuilding the project:
-  ```bash
-  npm run clean && npm run build
-  ```
-- Check that your environment variables in `.env` and `cline_mcp_settings.json` are set correctly.
-- If you have problems with Claude integration, check the location of the `cline_mcp_settings.json` file.
-- For debugging, run with the `--json-rpc` flag and use curl to send test requests to port 3000.
+### Facebook Ads Management
+*"Build an automated campaign that creates ads based on my product catalog"*
 
-### Common Errors and Solutions
+## 🔧 Advanced Configuration
 
-#### Port Already in Use (EADDRINUSE)
+### Multiple n8n Instances
+Configure multiple MCP servers for different environments:
 
-If you see the following error in logs:
-```
-Error: listen EADDRINUSE: address already in use :::3456
-```
-
-This means that port 3456 (default for the MCP server) is already in use by another process. To fix:
-
-**Option 1: Use a Different Port with Environment Variable**
-
-Starting from version 0.7.2, you can specify a custom port using the `MCP_PORT` environment variable:
-
-```bash
-# In your code
-MCP_PORT=58921 npm start
-
-# Or when running directly
-MCP_PORT=58921 node build/index.js
-```
-
-If using Claude Desktop, update your `cline_mcp_settings.json` to include the new port:
 ```json
 {
-  "n8n-workflow-builder": {
-    "command": "node",
-    "args": ["path/to/your/project/build/index.js"],
-    "env": {
-      "N8N_HOST": "https://your-n8n-instance.com/api/v1/",
-      "N8N_API_KEY": "your_api_key_here",
-      "MCP_PORT": "58921"
+  "mcpServers": {
+    "n8n-production": {
+      "command": "node",
+      "args": ["path/to/build/index.js"],
+      "env": {
+        "N8N_HOST": "https://prod-n8n.railway.app/api/v1",
+        "N8N_API_KEY": "prod_key",
+        "MCP_PORT": "58921"
+      }
     },
-    // ...
+    "n8n-development": {
+      "command": "node", 
+      "args": ["path/to/build/index.js"],
+      "env": {
+        "N8N_HOST": "https://dev-n8n.railway.app/api/v1",
+        "N8N_API_KEY": "dev_key",
+        "MCP_PORT": "58922"
+      }
+    }
   }
 }
 ```
 
-**Option 2: Find and kill the process using the port**
-```bash
-# On macOS/Linux
-lsof -i :3456
-kill -9 <PID>
+### Custom Workflow Templates
+Add your own workflow templates by modifying the prompts in `src/prompts/`.
 
-# On Windows
-netstat -ano | findstr :3456
-taskkill /PID <PID> /F
+## 🌟 Features Confirmed Working
+
+✅ **Workflow Creation** - Build complex automations via chat  
+✅ **Railway n8n Integration** - Full cloud hosting support  
+✅ **Facebook Ads MCP** - Complete ads automation  
+✅ **Real-time Execution** - Instant workflow control  
+✅ **Cross-platform** - Windows, Mac, Linux support  
+✅ **Error Handling** - Robust debugging and logging  
+✅ **Multi-instance** - Support multiple n8n environments  
+
+## 📦 What's Included
+
+```
+n8n-mcp/
+├── src/                    # TypeScript source code
+├── build/                  # Compiled JavaScript  
+├── examples/               # Example workflows
+├── SETUP_INSTRUCTIONS.md   # Complete setup guide
+├── CLAUDE_CONFIG.md        # Working Claude configuration
+├── install.bat            # Windows setup script
+├── install.sh             # Linux/Mac setup script
+├── package.json           # Dependencies & scripts
+└── README.md              # This file
 ```
 
-**Note on Version 0.7.2+:** Starting with version 0.7.2, the server includes improved handling for port conflicts, automatically detecting when a port is already in use and gracefully continuing operation without throwing errors. This is especially helpful when Claude Desktop attempts to start multiple instances of the same server.
+## 🤝 Contributing
 
-### Running Multiple Server Instances
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)  
+5. Open a Pull Request
 
-If you need to run multiple instances of the n8n workflow builder server (for example, for different n8n installations), you can do this by configuring separate ports:
+## 📄 License
 
-1. **Configure different ports for each instance**:
-   ```bash
-   # First instance
-   MCP_PORT=58921 node build/index.js
-   
-   # Second instance
-   MCP_PORT=58922 node build/index.js
-   ```
+MIT License - see [LICENSE](LICENSE) for details.
 
-2. **Create separate Claude Desktop configurations**:
-   For each instance, create a separate entry in your `claude_desktop_config.json` file:
-   
-   ```json
-   {
-     "mcpServers": {
-       "n8n-workflow-builder-prod": {
-         "command": "node",
-         "args": ["path/to/build/index.js"],
-         "env": {
-           "N8N_HOST": "https://production-n8n.example.com/api/v1/",
-           "N8N_API_KEY": "your_prod_api_key",
-           "MCP_PORT": "58921"
-         }
-       },
-       "n8n-workflow-builder-dev": {
-         "command": "node",
-         "args": ["path/to/build/index.js"],
-         "env": {
-           "N8N_HOST": "https://dev-n8n.example.com/api/v1/",
-           "N8N_API_KEY": "your_dev_api_key",
-           "MCP_PORT": "58922"
-         }
-       }
-     }
-   }
-   ```
+## 🆘 Support
 
-3. **Access each instance in Claude**:
-   After restarting Claude Desktop, you'll see both servers available in your tools list.
+- **Issues**: https://github.com/aqilrvsb/n8n-mcp/issues
+- **Discussions**: Use GitHub Discussions for questions
+- **Railway n8n**: https://n8n-production-790f.up.railway.app/
 
-#### Authentication Errors
+## ⭐ Show Your Support
 
-If you see errors related to API authentication:
-```
-Error: Request failed with status code 401
-```
+If this project helped you automate your workflows, please ⭐ star the repository!
 
-Check that:
-1. Your API key is correct and hasn't expired
-2. The N8N_API_KEY in your `.env` file matches your n8n instance
-3. Your n8n instance has API access enabled
+---
 
-#### Set Node Parameter Error
+**Built with ❤️ for automation enthusiasts**
 
-If you encounter the error `node.parameters.values.map is not a function` when creating workflows:
-
-This usually happens when creating workflows with Set nodes that use the newer n8n parameter structure. Version 0.7.2+ includes a fix that supports both the legacy array format and the newer object-based format for Set node parameters.
-
-## Version Compatibility
-
-This MCP server has been specifically tested and validated with:
-- **n8n version**: 1.82.3
-- **Node.js**: v14 and above
-- **MCP Protocol**: Latest version compatible with Claude and Cursor
-
-If you're using a different version of n8n, some API endpoints or node types may differ. Please report any compatibility issues in the GitHub repository.
-
-[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/01934c6d-aff1-497b-9e11-b21a9d207667)
-
-
-## Changelog
-
-### 0.7.2 (Current)
-- Fixed validation error when handling Set node parameters in workflow creation
-- Added improved error handling for port conflicts
-- Enhanced server startup reliability with multiple running instances
-- Fixed `node.parameters.values.map is not a function` error for modern n8n node structure
-- Added MCP_PORT environment variable support for custom port configuration
-
-### 0.7.1
-- Added detailed documentation about n8n API limitations and known issues
-- Enhanced troubleshooting section with specific error codes and solutions
-- Added comprehensive explanation of trigger node requirements
-- Improved UUID generation for tag management to prevent conflicts
-- Updated testing documentation with detailed examples
-
-### Version 0.7.0
-- Enhanced trigger node detection and compatibility with n8n 1.82.3
-- Improved handling of workflow activation when no trigger node exists
-- Added proper handling of different trigger node types (schedule, webhook)
-- Fixed tag management with proper conflict handling and UUID generation
-- Updated documentation with trigger node requirements and compatibility notes
-- Improved test-mcp-tools.js with enhanced workflow testing and error handling
-
-### Version 0.6.1
-- Fixed NPM package configuration
-- Excluded test scripts and sensitive files from NPM package
-
-### Version 0.6.0
-- Added **execute_workflow** tool to manually run workflows by ID
-- Added new **API Data Polling Workflow** template for efficient API data retrieval and filtering
-- Improved error handling for workflow creation and validation
-- Added validation checks for typical workflow configuration issues
-- Better error messages with suggestions for common problems
-
-### Version 0.5.0
-- Initial public release
-- Basic workflow management functionality
-- Execution tracking and monitoring
-- Four workflow templates
-
-## License
-
-This project is distributed under the MIT License.
+*Transform your workflows. Automate everything. Control with Claude.*
